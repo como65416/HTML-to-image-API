@@ -5,13 +5,19 @@ const app = express();
 app.use(express.json());
 
 app.post('/html-to-image', async function(req, res) {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
   const html = req.body.html;
   const type = req.body.type || 'png';
   const width = req.body.width || 800;
   const height = req.body.height || 600;
+
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox'
+    ]
+  });
+  const page = await browser.newPage();
 
   await page.setContent(html);
   await page.setViewport({ width, height });
